@@ -1,12 +1,12 @@
 {
-  "name": "nopkg",
+  "name": "pkgshield",
   "description": "A CLI tool to protect your supply chain security",
   "version": "0.0.0",
   "author": "Maxi Ferreira",
   "bin": {
-    "nopkg": "./bin/run.js"
+    "pkgshield": "./bin/run.js"
   },
-  "bugs": "https://github.com/Charca/nopkg/issues",
+  "bugs": "https://github.com/Charca/pkgshield/issues",
   "dependencies": {
     "@oclif/core": "^4",
     "@oclif/plugin-help": "^6",
@@ -37,7 +37,7 @@
     "./dist",
     "./oclif.manifest.json"
   ],
-  "homepage": "https://github.com/Charca/nopkg",
+  "homepage": "https://github.com/Charca/pkgshield",
   "keywords": [
     "oclif"
   ],
@@ -45,8 +45,8 @@
   "main": "dist/index.js",
   "type": "module",
   "oclif": {
-    "bin": "nopkg",
-    "dirname": "nopkg",
+    "bin": "pkgshield",
+    "dirname": "pkgshield",
     "commands": "./dist/commands",
     "plugins": [
       "@oclif/plugin-help",
@@ -54,7 +54,7 @@
     ],
     "topicSeparator": " "
   },
-  "repository": "Charca/nopkg",
+  "repository": "Charca/pkgshield",
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
     "lint": "eslint",

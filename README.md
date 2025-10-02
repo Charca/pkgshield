@@ -1,10 +1,10 @@
-# nopkg
+# pkgshield
 
 A CLI tool to protect against supply chain attacks from hallucinated dependencies (also known as "[slopsquatting](https://en.wikipedia.org/wiki/Slopsquatting)").
 
 ## About
 
-`nopkg` helps identify potentially risky npm packages by checking:
+`pkgshield` helps identify potentially risky npm packages by checking:
 
 - **New packages** - Packages with recent initial releases that haven't been battle-tested
 - **New versions** - Recently published versions that may contain malicious code
@@ -13,15 +13,15 @@ A CLI tool to protect against supply chain attacks from hallucinated dependencie
 ## Installation
 
 ```bash
-npm install -g nopkg
+npm install -g pkgshield
 ```
 
 ## Usage
 
-Run `nopkg check` in your project directory to scan all dependencies in your `package.json`:
+Run `pkgshield check` in your project directory to scan all dependencies in your `package.json`:
 
 ```bash
-nopkg check
+pkgshield check
 ```
 
 ### Customizing Thresholds
@@ -30,16 +30,16 @@ You can customize the warning thresholds using flags:
 
 ```bash
 # Check for packages newer than 60 days (default: 30)
-nopkg check --package-age 60
+pkgshield check --package-age 60
 
 # Check for versions newer than 7 days (default: 2)
-nopkg check --version-age 7
+pkgshield check --version-age 7
 
 # Check for packages unmaintained for 2 years (default: 365 days)
-nopkg check --unmaintained 730
+pkgshield check --unmaintained 730
 
 # Combine multiple flags
-nopkg check --package-age 60 --version-age 7 --unmaintained 730
+pkgshield check --package-age 60 --version-age 7 --unmaintained 730
 ```
 
 ### Available Flags
