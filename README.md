@@ -1,6 +1,6 @@
 # nopkg
 
-A CLI tool to protect against supply chain attacks from hallucinated dependencies (also known as "slopsquatting").
+A CLI tool to protect against supply chain attacks from hallucinated dependencies (also known as "[slopsquatting](https://en.wikipedia.org/wiki/Slopsquatting)").
 
 ## About
 
