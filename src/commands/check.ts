@@ -9,6 +9,12 @@ interface PackageJson {
   version?: string
 }
 
+interface PackageLockJson {
+  packages: Record<string, {
+    version?: string
+  }>
+}
+
 interface NpmRegistryResponse {
   'dist-tags': {
     latest: string
@@ -56,6 +62,9 @@ export default class Check extends Command {
     const packageJsonPath = resolve(process.cwd(), 'package.json')
     const packageJson = await this.readPackageJson(packageJsonPath)
 
+    const packageLockPath = resolve(process.cwd(), 'package-lock.json')
+    const packageLock = await this.readPackageLock(packageLockPath)
+
     const dependencies = {
       ...packageJson.dependencies,
       ...packageJson.devDependencies,
@@ -72,7 +81,7 @@ export default class Check extends Command {
 
     for await (const [name, versionSpec] of Object.entries(dependencies)) {
       try {
-        const report = await this.checkPackage(name, versionSpec, flags)
+        const report = await this.checkPackage(name, versionSpec, flags, packageLock)
         reports.push(report)
       } catch (error) {
         this.warn(`Failed to check package ${name}: ${error instanceof Error ? error.message : 'Unknown error'}`)
@@ -86,11 +95,13 @@ export default class Check extends Command {
     name: string,
     versionSpec: string,
     flags: {'package-age': number; unmaintained: number; 'version-age': number},
+    packageLock: PackageLockJson,
   ): Promise<PackageReport> {
     const packageInfo = await this.fetchPackageInfo(name)
 
-    // Extract installed version from version spec (remove ^, ~, etc.)
-    const installedVersion = versionSpec.replace(/^[^0-9]*/, '')
+    // Get actual installed version from package-lock.json
+    const lockEntry = packageLock.packages[`node_modules/${name}`]
+    const installedVersion = lockEntry?.version || versionSpec.replace(/^[^0-9]*/, '')
 
     const timeEntries = Object.entries(packageInfo.time).filter(([key]) => key !== 'created' && key !== 'modified')
     const sortedVersions = timeEntries.sort(
@@ -100,15 +111,20 @@ export default class Check extends Command {
     const firstRelease = sortedVersions[0]
     const firstReleaseDate = new Date(firstRelease[1])
 
-    const installedVersionDate = packageInfo.time[installedVersion]
-      ? new Date(packageInfo.time[installedVersion])
-      : new Date()
-
     const latestVersion = packageInfo['dist-tags'].latest
     const latestVersionDate = new Date(packageInfo.time[latestVersion])
 
     const now = new Date()
     const warnings: string[] = []
+
+    // Check if installed version exists in registry
+    let installedVersionDate: Date
+    if (packageInfo.time[installedVersion]) {
+      installedVersionDate = new Date(packageInfo.time[installedVersion])
+    } else {
+      warnings.push(`Version ${installedVersion} not found in npm registry`)
+      installedVersionDate = now // Use current date as fallback for display purposes
+    }
 
     // Check 1: Package is too new
     const packageAgeDays = this.getDaysDifference(firstReleaseDate, now)
@@ -116,12 +132,14 @@ export default class Check extends Command {
       warnings.push(`Package is too new (${packageAgeDays} days old, threshold: ${flags['package-age']} days)`)
     }
 
-    // Check 2: Installed version is too new
-    const versionAgeDays = this.getDaysDifference(installedVersionDate, now)
-    if (versionAgeDays < flags['version-age']) {
-      warnings.push(
-        `Installed version is too new (${versionAgeDays} days old, threshold: ${flags['version-age']} days)`,
-      )
+    // Check 2: Installed version is too new (only if version was found)
+    if (packageInfo.time[installedVersion]) {
+      const versionAgeDays = this.getDaysDifference(installedVersionDate, now)
+      if (versionAgeDays < flags['version-age']) {
+        warnings.push(
+          `Installed version is too new (${versionAgeDays} days old, threshold: ${flags['version-age']} days)`,
+        )
+      }
     }
 
     // Check 3: Package appears unmaintained
@@ -194,6 +212,15 @@ export default class Check extends Command {
       return JSON.parse(content) as PackageJson
     } catch (error) {
       this.error(`Failed to read package.json: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  private async readPackageLock(path: string): Promise<PackageLockJson> {
+    try {
+      const content = await readFile(path, 'utf8')
+      return JSON.parse(content) as PackageLockJson
+    } catch (error) {
+      this.error(`Failed to read package-lock.json: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 }
