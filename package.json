@@ -1,7 +1,7 @@
 {
   "name": "pkgshield",
   "description": "A CLI tool to protect your supply chain security",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "author": "Maxi Ferreira",
   "bin": {
     "pkgshield": "./bin/run.js"
