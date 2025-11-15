@@ -1,8 +1,8 @@
 # Pkgshield Roadmap
 
-- **Version:** 1.1
+- **Version:** 0.1.1
 - **Owner:** Maxi Ferreira
-- **Last Updated:** November 15, 2025
+- **Last Updated:** November 12, 2025
 
 ---
 
@@ -43,18 +43,21 @@ Pkgshield currently provides a foundational security scanning capability:
 ### Short-term Goals (v0.2.0 - v0.3.0)
 
 #### Enhanced Detection Capabilities
+
 - **Typosquatting Detection**: Identify packages with names suspiciously similar to popular packages
 - **Author Reputation Checks**: Verify package authors against known maintainers of popular packages
 - **Download Statistics Analysis**: Flag packages with unusual download patterns
 - **GitHub Repository Verification**: Check if packages have legitimate GitHub repositories
 
 #### Developer Experience Improvements
+
 - **Configuration File Support**: Add `.pkgshieldrc` or `pkgshield.config.json` for project-level settings
 - **Multiple Output Formats**: Support JSON, SARIF, and other formats for CI/CD integration
 - **Exit Codes**: Proper exit codes for CI/CD pipelines (non-zero on warnings/errors)
 - **Better Error Handling**: More graceful handling of network errors and missing packages
 
 #### Performance Optimizations
+
 - **Caching Layer**: Cache npm registry responses to reduce API calls
 - **Parallel Processing**: Check multiple packages concurrently
 - **Incremental Checks**: Only check packages that have changed since last run
@@ -62,23 +65,27 @@ Pkgshield currently provides a foundational security scanning capability:
 ### Medium-term Goals (v0.4.0 - v0.6.0)
 
 #### Multi-Package Manager Support
+
 - **Yarn Support**: Read `yarn.lock` files
 - **pnpm Support**: Read `pnpm-lock.yaml` files
 - **Workspace Support**: Handle monorepos and workspace configurations
 
 #### Advanced Security Features
+
 - **Vulnerability Database Integration**: Cross-reference packages with known CVE databases
 - **License Compliance Checking**: Identify packages with problematic licenses
 - **Dependency Graph Analysis**: Analyze transitive dependencies for security issues
 - **Historical Analysis**: Track package changes over time to detect suspicious patterns
 
 #### CI/CD Integration
+
 - **GitHub Actions**: Official GitHub Action for easy CI integration
 - **GitLab CI**: Support for GitLab CI/CD pipelines
 - **Jenkins Plugin**: Optional Jenkins plugin
 - **Pre-commit Hooks**: Git hooks to check before commits
 
 #### Reporting Enhancements
+
 - **HTML Reports**: Generate detailed HTML reports with visualizations
 - **Dashboard**: Optional web dashboard for tracking security over time
 - **Email/Slack Notifications**: Alert teams when issues are detected
@@ -87,22 +94,26 @@ Pkgshield currently provides a foundational security scanning capability:
 ### Long-term Goals (v0.7.0+)
 
 #### Enterprise Features
+
 - **Policy Engine**: Define organizational security policies
 - **Whitelist/Blacklist Management**: Manage approved and blocked packages
 - **Audit Logging**: Track all security checks and decisions
 - **Team Collaboration**: Share security findings across teams
 
 #### Advanced Analytics
+
 - **Risk Scoring**: Calculate risk scores for packages based on multiple factors
 - **Machine Learning**: Use ML to detect suspicious patterns
 - **Predictive Analysis**: Predict which packages might become problematic
 
 #### Ecosystem Integration
+
 - **IDE Plugins**: VS Code, IntelliJ, and other IDE extensions
 - **Package Registry Integration**: Work with private npm registries
 - **Security Advisory Integration**: Integrate with npm security advisories and GitHub Security Advisories
 
 #### Community & Open Source
+
 - **Plugin System**: Allow community to extend functionality
 - **Rule Marketplace**: Share custom detection rules
 - **Community Database**: Crowdsourced package reputation data
