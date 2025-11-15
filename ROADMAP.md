@@ -4,7 +4,7 @@
 - **Owner:** Maxi Ferreira
 - **Last Updated:** November 15, 2025
 
---
+---
 
 ## What is Pkgshield?
 
