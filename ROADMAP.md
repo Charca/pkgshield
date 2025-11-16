@@ -10,6 +10,103 @@
 
 **Pkgshield** is a CLI tool designed to protect your Node.js projects against supply chain attacks, specifically targeting the threat of "slopsquatting" (also known as hallucinated dependencies). Slopsquatting occurs when malicious actors create packages with names that are similar to popular packages, hoping developers will accidentally install them due to typos or AI-generated code suggestions.
 
+## How It Works
+
+Pkgshield analyzes your project's dependencies by examining package metadata from the npm registry and applying time-based security heuristics. Here's a high-level overview of the process:
+
+```mermaid
+flowchart TD
+    A[Start: pkgshield check] --> B[Read package.json]
+    B --> C[Read package-lock.json]
+    C --> D[Extract all dependencies]
+    D --> E{Any dependencies?}
+    E -->|No| F[Display: No dependencies found]
+    E -->|Yes| G[For each package]
+    G --> H[Fetch package metadata<br/>from npm registry]
+    H --> I[Extract version dates]
+    I --> J[Check Package Age<br/>First release < threshold?]
+    J --> K[Check Version Age<br/>Installed version < threshold?]
+    K --> L[Check Maintenance Status<br/>Last release > threshold?]
+    L --> M{Any warnings?}
+    M -->|Yes| N[Add to warnings list]
+    M -->|No| O[Add to safe list]
+    N --> P{More packages?}
+    O --> P
+    P -->|Yes| G
+    P -->|No| Q[Generate Security Report]
+    Q --> R[Display report with warnings]
+    R --> S[End]
+    F --> S
+```
+
+### Example Input
+
+Given a `package.json` file like this:
+
+```json
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "^4.18.2",
+    "lodash": "^4.17.21",
+    "suspicious-pkg": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+### Example Output
+
+Running `pkgshield check` would produce output like:
+
+```bash
+$ pkgshield check
+
+Checking 4 packages...
+
+=== SECURITY CHECK REPORT ===
+
+⚠️  Found 1 package(s) with warnings:
+
+📦 suspicious-pkg@1.0.0
+   First release: 2025-01-10
+   Installed version date: 2025-01-11
+   Latest release: 2025-01-11
+   ⚠️  Package is too new (5 days old, threshold: 30 days)
+   ⚠️  Installed version is too new (1 days old, threshold: 2 days)
+
+✅ 3 package(s) passed all checks
+
+=== END REPORT ===
+```
+
+### Example with Custom Thresholds
+
+You can customize the thresholds using command-line flags:
+
+```bash
+$ pkgshield check --package-age 60 --version-age 7 --unmaintained 730
+
+Checking 4 packages...
+
+=== SECURITY CHECK REPORT ===
+
+⚠️  Found 1 package(s) with warnings:
+
+📦 old-package@2.0.0
+   First release: 2020-05-15
+   Installed version date: 2023-12-08
+   Latest release: 2023-12-08
+   ⚠️  Package may be unmaintained (800 days since last release, threshold: 730 days)
+
+✅ 3 package(s) passed all checks
+
+=== END REPORT ===
+```
+
 ## Current State (v0.1.0)
 
 Pkgshield currently provides a foundational security scanning capability:
